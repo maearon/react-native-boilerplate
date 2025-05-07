@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "bugbook-mobile-rn",
-    "slug": "bugbook-mobile-rn",
+    "name": "react-native-boilerplate",
+    "slug": "react-native-boilerplate",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
