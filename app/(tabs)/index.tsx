@@ -1,75 +1,205 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import LoadingSpinner from "@/components/LoadingSpinner"
+import MicropostForm from "@/components/MicropostForm"
+import MicropostItem from "@/components/MicropostItem"
+import UserInfo from "@/components/UserInfo"
+import UserStats from "@/components/UserStats"
+import { getMicroposts } from "@/services/micropostService"
+import { useAuthStore } from "@/stores/authStore"
+import type { Micropost } from "@/types/micropost"
+import { useNavigation } from "@react-navigation/native"
+import { useEffect, useState } from "react"
+import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const Home = () => {
+  const { loggedIn, user } = useAuthStore()
+  const navigation = useNavigation()
+  const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [page, setPage] = useState(1)
+  const [feedItems, setFeedItems] = useState<Micropost[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [followingCount, setFollowingCount] = useState(0)
+  const [followersCount, setFollowersCount] = useState(0)
+  const [micropostCount, setMicropostCount] = useState(0)
 
-export default function HomeScreen() {
+  const loadFeed = async (refresh = false) => {
+    try {
+      const currentPage = refresh ? 1 : page
+      const response = await getMicroposts({ page: currentPage })
+
+      setFeedItems(refresh ? response.feed_items || [] : [...feedItems, ...(response.feed_items || [])])
+      setTotalCount(response.total_count || 0)
+      setFollowingCount(response.following || 0)
+      setFollowersCount(response.followers || 0)
+      setMicropostCount(response.micropost || 0)
+
+      if (refresh) {
+        setPage(1)
+      }
+    } catch (error) {
+      console.error("Error loading feed:", error)
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }
+
+  useEffect(() => {
+    if (loggedIn) {
+      loadFeed()
+    } else {
+      setLoading(false)
+    }
+  }, [loggedIn])
+
+  const handleRefresh = () => {
+    setRefreshing(true)
+    loadFeed(true)
+  }
+
+  const handleLoadMore = () => {
+    if (feedItems.length < totalCount) {
+      setPage(page + 1)
+      loadFeed()
+    }
+  }
+
+  const handleMicropostDeleted = () => {
+    handleRefresh()
+  }
+
+  if (loading) {
+    return <LoadingSpinner fullPage />
+  }
+
+  if (!loggedIn) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.welcomeTitle}>Welcome to the Sample App</Text>
+          <Text style={styles.welcomeText}>
+            This is the home page for the React Native Tutorial sample application.
+          </Text>
+          <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate("Signup" as never)}>
+            <Text style={styles.signupButtonText}>Sign up now!</Text>
+          </TouchableOpacity>
+          <View style={styles.logoContainer}>
+            <Image source={require("../../assets/images/react-logo.png")} style={styles.logo} resizeMode="contain" />
+          </View>
+        </View>
+      </SafeAreaView>
+    )
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={feedItems}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
+        renderItem={({ item }) => <MicropostItem micropost={item} onDelete={handleMicropostDeleted} />}
+        ListHeaderComponent={
+          <View style={styles.headerContainer}>
+            <View style={styles.card}>
+              {user && <UserInfo user={user} micropostCount={micropostCount} showProfileLink={true} />}
+            </View>
+
+            <View style={styles.card}>
+              <UserStats userId={user?.id ?? ""} following={followingCount} followers={followersCount} />
+            </View>
+
+            <View style={styles.card}>
+              <MicropostForm onPostCreated={handleRefresh} />
+            </View>
+
+            <Text style={styles.sectionTitle}>Micropost Feed</Text>
+
+            {feedItems.length === 0 && (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No microposts yet.</Text>
+              </View>
+            )}
+          </View>
+        }
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={feedItems.length > 0 && page * 5 < totalCount ? <LoadingSpinner /> : null}
+      />
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  headerContainer: {
+    padding: 15,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-});
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  emptyContainer: {
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#666",
+  },
+  welcomeContainer: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
+  },
+  welcomeTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  welcomeText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 30,
+    color: "#666",
+  },
+  signupButton: {
+    backgroundColor: "#0a7ea4",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+  },
+  signupButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  logoContainer: {
+    marginTop: 40,
+  },
+  logo: {
+    width: 180,
+    height: 38,
+  },
+})
+
+export default Home

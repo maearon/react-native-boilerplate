@@ -1,8 +1,8 @@
+import { api, handleApiResponse } from "@/services/api"
+import type { LoginCredentials, User } from "@/types/auth"
 import * as SecureStore from "expo-secure-store"
+import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { create } from "zustand/traditional"
-import { api, handleApiResponse } from "../services/api"
-import type { LoginCredentials, User } from "../types/auth"
 
 // Custom storage for SecureStore
 const secureStorage = {

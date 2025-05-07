@@ -1,8 +1,10 @@
+import { useAuthStore } from "@/stores/authStore";
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 
 export default function Menu() {
+  const { logout } = useAuthStore();
   const [isVisible, setIsVisible] = useState(true); // Hiện menu ngay khi vào tab
 
   return (
@@ -14,18 +16,26 @@ export default function Menu() {
         onBackdropPress={() => setIsVisible(false)}
         style={styles.modal}
       >
-        <RightMenu onClose={() => setIsVisible(false)} />
+        <RightMenu
+        onClose={() => setIsVisible(false)}
+        onLogout={() => {
+          setIsVisible(false);
+          logout();
+        }}
+      />
       </Modal>
     </View>
   );
 }
 
-function RightMenu({ onClose }: { onClose: () => void }) {
+function RightMenu({ onClose, onLogout }: { onClose: () => void; onLogout: () => void }) {
   return (
     <View style={styles.menuContainer}>
       <Text style={styles.item}>👤 Profile</Text>
       <Text style={styles.item}>⚙️ Settings</Text>
-      <Text style={styles.item}>📤 Log out</Text>
+      <Pressable onPress={onLogout}>
+        <Text style={[styles.item, { color: 'red' }]}>📤 Log out</Text>
+      </Pressable>
 
       <Pressable onPress={onClose}>
         <Text style={styles.close}>⬅️ Close</Text>
