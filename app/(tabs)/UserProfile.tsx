@@ -34,7 +34,7 @@ const UserProfile = ({ route, navigation }: any) => {
       setIsFollowing(response.user.current_user_following_user)
 
       // Update navigation title
-      navigation.setOptions({ title: response.user.name })
+      // navigation.setOptions({ title: response.user.name })
 
       if (refresh) {
         setPage(1)
