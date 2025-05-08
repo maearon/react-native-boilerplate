@@ -7,6 +7,7 @@ import { getMicroposts } from "@/services/micropostService"
 import { useAuthStore } from "@/stores/authStore"
 import type { Micropost } from "@/types/micropost"
 import { useNavigation } from "@react-navigation/native"
+import { router } from 'expo-router'
 import { useEffect, useState } from "react"
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
@@ -80,7 +81,7 @@ const Home = () => {
           <Text style={styles.welcomeText}>
             This is the home page for the React Native Tutorial sample application.
           </Text>
-          <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate("Signup" as never)}>
+          <TouchableOpacity style={styles.signupButton} onPress={() => router.push({ pathname: '/Signup'})}>
             <Text style={styles.signupButtonText}>Sign up now!</Text>
           </TouchableOpacity>
           <View style={styles.logoContainer}>

@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/stores/authStore"
 import { useNavigation } from "@react-navigation/native"
+import { router } from 'expo-router'
 import { Formik } from "formik"
 import { useState } from "react"
 import { SafeAreaView, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native"
@@ -97,11 +98,11 @@ const Login = () => {
           <View style={styles.linksContainer}>
             <Text style={styles.linkText}>
               New user?{" "}
-              <Text style={styles.link} onPress={() => navigation.navigate("Signup" as never)}>
+              <Text style={styles.link} onPress={() => router.push({ pathname: '/Signup'})}>
                 Sign up now!
               </Text>
             </Text>
-            <Text style={styles.link} onPress={() => navigation.navigate("PasswordResetsNew" as never)}>
+            <Text style={styles.link} onPress={() => router.push({ pathname: '/PasswordResetsNew'})}>
               Forgot password?
             </Text>
           </View>

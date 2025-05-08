@@ -2,6 +2,7 @@ import LoadingSpinner from "@/components/LoadingSpinner"
 import { deleteUser, getUsers } from "@/services/userService"
 import { useAuthStore } from "@/stores/authStore"
 import type { User } from "@/types/user"
+import { router } from 'expo-router'
 import { useEffect, useState } from "react"
 import { Alert, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
@@ -81,7 +82,7 @@ const Users = ({ navigation }: any) => {
         renderItem={({ item }: any) => (
           <TouchableOpacity
             style={styles.userItem}
-            onPress={() => navigation.navigate("UserProfile", { id: item.id, name: item.name })}
+            onPress={() => router.push({ pathname: '/UserProfile', params: { id: item.id, name: item.name } })}
           >
             <Image
               style={styles.avatar}

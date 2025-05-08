@@ -1,5 +1,6 @@
 import type { PasswordResetUpdateParams } from "@/services/passwordResetService"
 import { resetPassword } from "@/services/passwordResetService"
+import { router } from 'expo-router'
 import { Formik } from "formik"
 import { useState } from "react"
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
@@ -40,7 +41,7 @@ const PasswordResets = ({ route, navigation }: any) => {
 
       if (response.flash) {
         // Show success message and navigate to login
-        navigation.navigate("Login")
+        router.push({ pathname: '/Login'})
       } else if (response.error) {
         setError(Array.isArray(response.error) ? response.error[0] : response.error)
       }

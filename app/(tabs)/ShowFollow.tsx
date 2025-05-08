@@ -4,6 +4,7 @@ import UserStats from "@/components/UserStats"
 import { getFollowers, getFollowing } from "@/services/userService"
 import { useAuthStore } from "@/stores/authStore"
 import type { User } from "@/types/user"
+import { router } from 'expo-router'
 import { useEffect, useState } from "react"
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
@@ -85,7 +86,7 @@ const ShowFollow = ({ route, navigation }: any) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.userItem}
-            onPress={() => navigation.navigate("UserProfile", { id: item.id, name: item.name })}
+            onPress={() => router.push({ pathname: '/UserProfile', params: { id: item.id, name: item.name } })}
           >
             <Image
               style={styles.avatar}

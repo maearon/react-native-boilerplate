@@ -1,5 +1,6 @@
 import { createUser } from "@/services/userService"
 import type { UserCreateParams } from "@/types/user"
+import { router } from 'expo-router'
 import { Formik } from "formik"
 import { useState } from "react"
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
@@ -27,7 +28,7 @@ const Signup = ({ navigation }: any) => {
       const response = await createUser({ user: values })
 
       if (response.flash) {
-        Alert.alert("Success", response.flash[1], [{ text: "OK", onPress: () => navigation.navigate("Login") }])
+        Alert.alert("Success", response.flash[1], [{ text: "OK", onPress: () => router.push({ pathname: '/Login'}) }])
       } else if (response.errors) {
         setSignupErrors(response.errors)
       } else if (response.error) {
