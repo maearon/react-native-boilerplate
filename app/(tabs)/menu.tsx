@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
@@ -14,10 +15,10 @@ export default function Menu({ visible, onClose }: { visible: boolean; onClose: 
     navigation.navigate('index' as never);
   };
 
-  const handleNavigate = (screen: string) => {
-    onClose();
-    navigation.navigate(screen as never);
-  };
+  const handleNavigate = (path: string, params: any) => {
+    onClose()
+    router.push({ pathname: path as never, params });
+  }
 
   return (
     <Modal
@@ -30,10 +31,10 @@ export default function Menu({ visible, onClose }: { visible: boolean; onClose: 
       <View style={styles.menuContainer}>
         {loggedIn ? (
           <>
-            <Pressable onPress={() => handleNavigate(`users/${user?.id}`)}>
+            <Pressable onPress={() => handleNavigate('/UserProfile', { id: user?.id })}>
               <Text style={styles.item}>👤 Profile</Text>
             </Pressable>
-            <Pressable onPress={() => handleNavigate(`users/${user?.id}/edit`)}>
+            <Pressable onPress={() => handleNavigate('/UserSettings', { id: user?.id })}>
               <Text style={styles.item}>⚙️ Settings</Text>
             </Pressable>
             <Pressable onPress={handleLogout}>
@@ -41,7 +42,7 @@ export default function Menu({ visible, onClose }: { visible: boolean; onClose: 
             </Pressable>
           </>
         ) : (
-          <Pressable onPress={() => handleNavigate('Login')}>
+          <Pressable onPress={() => handleNavigate('/Login', {})}>
             <Text style={styles.item}>🔑 Log in</Text>
           </Pressable>
         )}
