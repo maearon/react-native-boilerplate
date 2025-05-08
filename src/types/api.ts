@@ -1,5 +1,5 @@
 import type { Micropost } from "./micropost"
-import type { User, UserShow, UserEdit } from "./user"
+import type { User, UserEdit, UserShow } from "./user"
 
 export interface ApiResponse<T> {
   data?: T
@@ -112,4 +112,5 @@ export interface ActivationUpdateResponse {
   jwt?: string
   token?: string
   flash: [string, string]
+  error?: string[]
 }

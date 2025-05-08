@@ -1,9 +1,9 @@
+import { requestPasswordReset } from "@/services/passwordResetService"
 import { Formik } from "formik"
 import { useState } from "react"
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
 import * as Yup from "yup"
-import { requestPasswordReset } from "../services/passwordResetService"
 
 const PasswordResetSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Email is required"),

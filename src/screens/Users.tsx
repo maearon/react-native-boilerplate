@@ -1,10 +1,8 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, SafeAreaView, Alert } from "react-native"
-import { getUsers, deleteUser } from "../services/userService"
-import { useAuthStore } from "../stores/authStore"
+import { useEffect, useState } from "react"
+import { Alert, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import LoadingSpinner from "../components/LoadingSpinner"
+import { deleteUser, getUsers } from "../services/userService"
+import { useAuthStore } from "../stores/authStore"
 
 const Users = ({ navigation }: any) => {
   const { user: currentUser } = useAuthStore()

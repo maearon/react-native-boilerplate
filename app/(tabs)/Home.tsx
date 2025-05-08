@@ -1,14 +1,14 @@
+import LoadingSpinner from "@/components/LoadingSpinner"
+import MicropostForm from "@/components/MicropostForm"
+import MicropostItem from "@/components/MicropostItem"
+import UserInfo from "@/components/UserInfo"
+import UserStats from "@/components/UserStats"
+import { getMicroposts } from "@/services/micropostService"
+import { useAuthStore } from "@/stores/authStore"
+import type { Micropost } from "@/types/micropost"
 import { useNavigation } from "@react-navigation/native"
 import { useEffect, useState } from "react"
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import LoadingSpinner from "../components/LoadingSpinner"
-import MicropostForm from "../components/MicropostForm"
-import MicropostItem from "../components/MicropostItem"
-import UserInfo from "../components/UserInfo"
-import UserStats from "../components/UserStats"
-import { getMicroposts } from "../services/micropostService"
-import { useAuthStore } from "../stores/authStore"
-import type { Micropost } from "../types/micropost"
 
 const Home = () => {
   const { loggedIn, user } = useAuthStore()

@@ -1,11 +1,9 @@
-"use client"
-
+import { Ionicons } from "@expo/vector-icons"
+import * as ImagePicker from "expo-image-picker"
 import type React from "react"
 import { useState } from "react"
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Alert, Platform } from "react-native"
-import * as ImagePicker from "expo-image-picker"
+import { Alert, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { createMicropost } from "../services/micropostService"
-import { Ionicons } from "@expo/vector-icons"
 
 interface MicropostFormProps {
   onPostCreated?: () => void

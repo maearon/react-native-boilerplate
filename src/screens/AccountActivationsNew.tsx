@@ -1,11 +1,9 @@
-"use client"
-
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from "react-native"
 import { Formik } from "formik"
+import { useState } from "react"
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { TextInput } from "react-native-gesture-handler"
 import * as Yup from "yup"
 import { resendActivationEmail } from "../services/accountActivationService"
-import { TextInput } from "react-native-gesture-handler"
 
 const AccountActivationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Email is required"),

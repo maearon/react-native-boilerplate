@@ -1,13 +1,11 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Image, Alert } from "react-native"
 import { Formik } from "formik"
+import { useEffect, useState } from "react"
+import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { TextInput } from "react-native-gesture-handler"
 import * as Yup from "yup"
+import LoadingSpinner from "../components/LoadingSpinner"
 import { editUser, updateUser } from "../services/userService"
 import { useAuthStore } from "../stores/authStore"
-import { TextInput } from "react-native-gesture-handler"
-import LoadingSpinner from "../components/LoadingSpinner"
 import type { UserUpdateParams } from "../types/user"
 
 const UserEditSchema = Yup.object().shape({

@@ -112,4 +112,5 @@ export interface ActivationUpdateResponse {
   jwt?: string
   token?: string
   flash: [string, string]
+  error?: string[]
 }

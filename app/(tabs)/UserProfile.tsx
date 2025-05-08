@@ -1,14 +1,14 @@
+import FollowButton from "@/components/FollowButton"
+import LoadingSpinner from "@/components/LoadingSpinner"
+import MicropostItem from "@/components/MicropostItem"
+import UserInfo from "@/components/UserInfo"
+import UserStats from "@/components/UserStats"
+import { getUser } from "@/services/userService"
+import { useAuthStore } from "@/stores/authStore"
+import type { Micropost } from "@/types/micropost"
+import type { UserShow } from "@/types/user"
 import { useEffect, useState } from "react"
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native"
-import FollowButton from "../components/FollowButton"
-import LoadingSpinner from "../components/LoadingSpinner"
-import MicropostItem from "../components/MicropostItem"
-import UserInfo from "../components/UserInfo"
-import UserStats from "../components/UserStats"
-import { getUser } from "../services/userService"
-import { useAuthStore } from "../stores/authStore"
-import type { Micropost } from "../types/micropost"
-import type { UserShow } from "../types/user"
 
 const UserProfile = ({ route, navigation }: any) => {
   const { id } = route.params

@@ -1,10 +1,10 @@
+import LoadingSpinner from "@/components/LoadingSpinner"
+import UserInfo from "@/components/UserInfo"
+import UserStats from "@/components/UserStats"
+import { getFollowers, getFollowing } from "@/services/userService"
+import type { User } from "@/types/user"
 import { useEffect, useState } from "react"
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import LoadingSpinner from "../components/LoadingSpinner"
-import UserInfo from "../components/UserInfo"
-import UserStats from "../components/UserStats"
-import { getFollowers, getFollowing } from "../services/userService"
-import type { User } from "../types/user"
 
 const ShowFollow = ({ route, navigation }: any) => {
   const { id, type } = route.params

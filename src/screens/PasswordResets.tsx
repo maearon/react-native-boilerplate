@@ -1,12 +1,10 @@
-"use client"
-
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from "react-native"
 import { Formik } from "formik"
-import * as Yup from "yup"
-import { resetPassword } from "../services/passwordResetService"
+import { useState } from "react"
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
+import * as Yup from "yup"
 import type { PasswordResetUpdateParams } from "../services/passwordResetService"
+import { resetPassword } from "../services/passwordResetService"
 
 const PasswordResetSchema = Yup.object().shape({
   password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),

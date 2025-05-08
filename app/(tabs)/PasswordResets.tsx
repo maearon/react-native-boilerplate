@@ -1,108 +1,83 @@
+import type { PasswordResetUpdateParams } from "@/services/passwordResetService"
+import { resetPassword } from "@/services/passwordResetService"
 import { Formik } from "formik"
 import { useState } from "react"
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
 import * as Yup from "yup"
-import { createUser } from "../services/userService"
-import type { UserCreateParams } from "../types/user"
 
-const SignupSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
-  email: Yup.string().email("Invalid email address").required("Email is required"),
+const PasswordResetSchema = Yup.object().shape({
   password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
   password_confirmation: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Password confirmation is required"),
 })
 
-const Signup = ({ navigation }: any) => {
-  const [signupErrors, setSignupErrors] = useState<{ [key: string]: string[] } | null>(null)
-  const [generalError, setGeneralError] = useState<string | null>(null)
+const PasswordResets = ({ route, navigation }: any) => {
+  const { token, email } = route.params
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSignup = async (values: UserCreateParams, { setSubmitting }: any) => {
-    setSignupErrors(null)
-    setGeneralError(null)
+  const handleSubmit = async (values: { password: string; password_confirmation: string }, { setSubmitting }: any) => {
+    if (!token) {
+      setError("Invalid reset token")
+      return
+    }
+
+    setError(null)
+
+    const params: PasswordResetUpdateParams = {
+      email,
+      user: {
+        password: values.password,
+        password_confirmation: values.password_confirmation,
+      },
+    }
 
     try {
-      const response = await createUser({ user: values })
+      const response = await resetPassword(token, params)
 
       if (response.flash) {
-        Alert.alert("Success", response.flash[1], [{ text: "OK", onPress: () => navigation.navigate("Login") }])
-      } else if (response.errors) {
-        setSignupErrors(response.errors)
+        // Show success message and navigate to login
+        navigation.navigate("Login")
       } else if (response.error) {
-        setGeneralError(Array.isArray(response.error) ? response.error[0] : response.error)
+        setError(Array.isArray(response.error) ? response.error[0] : response.error)
       }
     } catch (error: any) {
-      if (error.errors) {
-        setSignupErrors(error.errors)
-      } else if (error.error) {
-        setGeneralError(Array.isArray(error.error) ? error.error[0] : error.error)
-      } else {
-        setGeneralError("An error occurred during signup. Please try again.")
-      }
+      setError(error.message || "Password reset failed")
     } finally {
       setSubmitting(false)
     }
+  }
+
+  if (!token || !email) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Invalid password reset link</Text>
+        </View>
+      </SafeAreaView>
+    )
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.card}>
-          <Text style={styles.title}>Sign up</Text>
+          <Text style={styles.title}>Reset password</Text>
 
-          {generalError && (
+          {error && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{generalError}</Text>
-            </View>
-          )}
-
-          {signupErrors && Object.keys(signupErrors).length > 0 && (
-            <View style={styles.errorContainer}>
-              {Object.entries(signupErrors).map(([field, errors]) =>
-                errors.map((error, index) => (
-                  <Text key={`${field}-${index}`} style={styles.errorText}>
-                    {field.charAt(0).toUpperCase() + field.slice(1)} {error}
-                  </Text>
-                )),
-              )}
+              <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
 
           <Formik
-            initialValues={{ name: "", email: "", password: "", password_confirmation: "" }}
-            validationSchema={SignupSchema}
-            onSubmit={handleSignup}
+            initialValues={{ password: "", password_confirmation: "" }}
+            validationSchema={PasswordResetSchema}
+            onSubmit={handleSubmit}
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <View>
-                <View style={styles.formGroup}>
-                  <Text style={styles.label}>Name</Text>
-                  <TextInput
-                    style={[styles.input, touched.name && errors.name ? styles.inputError : null]}
-                    onChangeText={handleChange("name")}
-                    onBlur={handleBlur("name")}
-                    value={values.name}
-                    placeholder="Enter your name"
-                  />
-                  {touched.name && errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={styles.label}>Email</Text>
-                  <TextInput
-                    style={[styles.input, touched.email && errors.email ? styles.inputError : null]}
-                    onChangeText={handleChange("email")}
-                    onBlur={handleBlur("email")}
-                    value={values.email}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                  {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-                </View>
-
                 <View style={styles.formGroup}>
                   <Text style={styles.label}>Password</Text>
                   <TextInput
@@ -110,7 +85,7 @@ const Signup = ({ navigation }: any) => {
                     onChangeText={handleChange("password")}
                     onBlur={handleBlur("password")}
                     value={values.password}
-                    placeholder="Enter your password"
+                    placeholder="Enter your new password"
                     secureTextEntry
                   />
                   {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
@@ -126,7 +101,7 @@ const Signup = ({ navigation }: any) => {
                     onChangeText={handleChange("password_confirmation")}
                     onBlur={handleBlur("password_confirmation")}
                     value={values.password_confirmation}
-                    placeholder="Confirm your password"
+                    placeholder="Confirm your new password"
                     secureTextEntry
                   />
                   {touched.password_confirmation && errors.password_confirmation && (
@@ -139,7 +114,7 @@ const Signup = ({ navigation }: any) => {
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.buttonText}>{isSubmitting ? "Creating account..." : "Create my account"}</Text>
+                  <Text style={styles.buttonText}>{isSubmitting ? "Updating password..." : "Update password"}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -158,6 +133,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 15,
+    justifyContent: "center",
   },
   card: {
     backgroundColor: "#fff",
@@ -220,4 +196,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Signup
+export default PasswordResets

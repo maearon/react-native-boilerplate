@@ -1,15 +1,15 @@
+import { resendActivationEmail } from "@/services/accountActivationService"
 import { Formik } from "formik"
 import { useState } from "react"
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
 import * as Yup from "yup"
-import { requestPasswordReset } from "../services/passwordResetService"
 
-const PasswordResetSchema = Yup.object().shape({
+const AccountActivationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Email is required"),
 })
 
-const PasswordResetsNew = () => {
+const AccountActivationsNew = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -18,14 +18,16 @@ const PasswordResetsNew = () => {
     setSuccess(null)
 
     try {
-      const response = await requestPasswordReset(values.email)
+      const response = await resendActivationEmail(values.email)
 
       if (response.flash) {
         setSuccess(response.flash[1])
         resetForm()
+      } else if (response.error) {
+        setError(Array.isArray(response.error) ? response.error[0] : response.error)
       }
     } catch (error: any) {
-      setError(error.message || "Failed to request password reset")
+      setError(error.message || "Failed to resend activation email")
     } finally {
       setSubmitting(false)
     }
@@ -35,7 +37,7 @@ const PasswordResetsNew = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.card}>
-          <Text style={styles.title}>Forgot password</Text>
+          <Text style={styles.title}>Resend activation email</Text>
 
           {success && (
             <View style={styles.successContainer}>
@@ -49,7 +51,7 @@ const PasswordResetsNew = () => {
             </View>
           )}
 
-          <Formik initialValues={{ email: "" }} validationSchema={PasswordResetSchema} onSubmit={handleSubmit}>
+          <Formik initialValues={{ email: "" }} validationSchema={AccountActivationSchema} onSubmit={handleSubmit}>
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <View>
                 <View style={styles.formGroup}>
@@ -71,7 +73,7 @@ const PasswordResetsNew = () => {
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.buttonText}>{isSubmitting ? "Submitting..." : "Submit"}</Text>
+                  <Text style={styles.buttonText}>{isSubmitting ? "Sending..." : "Resend activation email"}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -164,4 +166,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default PasswordResetsNew
+export default AccountActivationsNew

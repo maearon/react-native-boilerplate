@@ -1,8 +1,6 @@
-"use client"
-
 import type React from "react"
 import { useState } from "react"
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native"
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from "react-native"
 import { followUser, unfollowUser } from "../services/relationshipService"
 
 interface FollowButtonProps {

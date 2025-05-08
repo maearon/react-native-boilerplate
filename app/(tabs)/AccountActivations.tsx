@@ -1,7 +1,7 @@
+import LoadingSpinner from "@/components/LoadingSpinner"
+import { activateAccount } from "@/services/accountActivationService"
 import { useEffect, useState } from "react"
 import { SafeAreaView, StyleSheet, Text, View } from "react-native"
-import LoadingSpinner from "../components/LoadingSpinner"
-import { activateAccount } from "../services/accountActivationService"
 
 const AccountActivations = ({ route, navigation }: any) => {
   const { token, email } = route.params
