@@ -1,50 +1,56 @@
-import { useAuthStore } from "@/stores/authStore";
-import { useNavigation } from "@react-navigation/native";
-import { useState } from 'react';
+import { useAuthStore } from '@/stores/authStore';
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 
+export default function Menu({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const { loggedIn, logout, user } = useAuthStore();
+  const navigation = useNavigation();
 
-export default function Menu() {
-  const { logout } = useAuthStore();
-  const [isVisible, setIsVisible] = useState(true); // Show menu now when to tabs route
-  const navigation = useNavigation()
+  const handleLogout = () => {
+    logout();
+    onClose();
+    navigation.navigate('index' as never);
+  };
+
+  const handleNavigate = (screen: string) => {
+    onClose();
+    navigation.navigate(screen as never);
+  };
 
   return (
-    <View style={{ flex: 1 }}>
-      <Modal
-        isVisible={isVisible}
-        animationIn="slideInRight"
-        animationOut="slideOutRight"
-        onBackdropPress={() => setIsVisible(false)}
-        style={styles.modal}
-      >
-        <RightMenu
-        onClose={() => setIsVisible(false)}
-        onLogout={() => {
-          setIsVisible(false);
-          logout();
-          navigation.navigate("index" as never)
-        }}
-      />
-      </Modal>
-    </View>
-  );
-}
+    <Modal
+      isVisible={visible}
+      animationIn="slideInRight"
+      animationOut="slideOutRight"
+      onBackdropPress={onClose}
+      style={styles.modal}
+    >
+      <View style={styles.menuContainer}>
+        {loggedIn ? (
+          <>
+            <Pressable onPress={() => handleNavigate(`users/${user?.id}`)}>
+              <Text style={styles.item}>👤 Profile</Text>
+            </Pressable>
+            <Pressable onPress={() => handleNavigate(`users/${user?.id}/edit`)}>
+              <Text style={styles.item}>⚙️ Settings</Text>
+            </Pressable>
+            <Pressable onPress={handleLogout}>
+              <Text style={[styles.item, { color: 'red' }]}>📤 Log out</Text>
+            </Pressable>
+          </>
+        ) : (
+          <Pressable onPress={() => handleNavigate('Login')}>
+            <Text style={styles.item}>🔑 Log in</Text>
+          </Pressable>
+        )}
 
-function RightMenu({ onClose, onLogout }: { onClose: () => void; onLogout: () => void }) {
-  return (
-    <View style={styles.menuContainer}>
-      <Text style={styles.item}>👤 Profile</Text>
-      <Text style={styles.item}>⚙️ Settings</Text>
-      <Pressable onPress={onLogout}>
-        <Text style={[styles.item, { color: 'red' }]}>📤 Log out</Text>
-      </Pressable>
-
-      <Pressable onPress={onClose}>
-        <Text style={styles.close}>⬅️ Close</Text>
-      </Pressable>
-    </View>
+        <Pressable onPress={onClose}>
+          <Text style={styles.close}>⬅️ Close</Text>
+        </Pressable>
+      </View>
+    </Modal>
   );
 }
 

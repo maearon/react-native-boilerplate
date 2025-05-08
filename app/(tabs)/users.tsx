@@ -77,7 +77,7 @@ const Users = ({ navigation }: any) => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={users}
-        keyExtractor={(item: any) => item.id.toString()}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={({ item }: any) => (
           <TouchableOpacity
             style={styles.userItem}
