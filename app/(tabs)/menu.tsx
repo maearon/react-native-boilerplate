@@ -1,11 +1,14 @@
 import { useAuthStore } from "@/stores/authStore";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 
+
 export default function Menu() {
   const { logout } = useAuthStore();
-  const [isVisible, setIsVisible] = useState(true); // Hiện menu ngay khi vào tab
+  const [isVisible, setIsVisible] = useState(true); // Show menu now when to tabs route
+  const navigation = useNavigation()
 
   return (
     <View style={{ flex: 1 }}>
@@ -21,6 +24,7 @@ export default function Menu() {
         onLogout={() => {
           setIsVisible(false);
           logout();
+          navigation.navigate("index" as never)
         }}
       />
       </Modal>

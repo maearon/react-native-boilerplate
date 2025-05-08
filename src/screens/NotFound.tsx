@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native"
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 const NotFound = ({ navigation }: any) => {
   return (
@@ -8,7 +8,7 @@ const NotFound = ({ navigation }: any) => {
           <Text style={styles.title}>404 - Page Not Found</Text>
           <Text style={styles.message}>The page you are looking for does not exist.</Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("index" as never)}>
           <Text style={styles.buttonText}>Return to Home</Text>
         </TouchableOpacity>
       </View>

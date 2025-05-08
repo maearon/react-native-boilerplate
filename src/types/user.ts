@@ -3,6 +3,7 @@ export interface User {
   name: string
   email: string
   gravatar_id?: string
+  gravatar?: string
   size?: number
   following?: number
   followers?: number
