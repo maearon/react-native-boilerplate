@@ -47,6 +47,90 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="line.3.horizontal" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="About"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="AccountActivations"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="AccountActivationsNew"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="Contact"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="Login"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="NotFound"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="PasswordResets"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="PasswordResetsNew"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="ShowFollow"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="Signup"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="UserEdit"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="UserProfile"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="Home"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: null, // 👈 Ẩn khỏi tab bar
+        }}
+      />
       </Tabs>
   );
 }
