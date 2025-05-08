@@ -96,7 +96,7 @@ const UserProfile = ({ route, navigation }: any) => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={microposts}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={({ item }) => <MicropostItem micropost={item} onDelete={handleMicropostDeleted} />}
         ListHeaderComponent={
           <View style={styles.header}>

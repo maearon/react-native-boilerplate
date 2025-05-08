@@ -82,7 +82,7 @@ const ShowFollow = ({ route, navigation }: any) => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={users}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.userItem}
