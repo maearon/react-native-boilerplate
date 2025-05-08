@@ -2,12 +2,15 @@ import LoadingSpinner from "@/components/LoadingSpinner"
 import UserInfo from "@/components/UserInfo"
 import UserStats from "@/components/UserStats"
 import { getFollowers, getFollowing } from "@/services/userService"
+import { useAuthStore } from "@/stores/authStore"
 import type { User } from "@/types/user"
 import { useEffect, useState } from "react"
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 const ShowFollow = ({ route, navigation }: any) => {
-  const { id, type } = route.params
+  // const { id, type } = route.params
+  const { user: currentUser } = useAuthStore()
+  const type = "following"
   const [loading, setLoading] = useState(true)
   const [users, setUsers] = useState<User[]>([])
   const [refreshing, setRefreshing] = useState(false)
@@ -23,11 +26,11 @@ const ShowFollow = ({ route, navigation }: any) => {
   } | null>(null)
 
   const loadData = async (refresh = false) => {
-    if (!id) return
+    if (!currentUser?.id) return
 
     try {
       const currentPage = refresh ? 1 : page
-      const response = type === "following" ? await getFollowing(id, currentPage) : await getFollowers(id, currentPage)
+      const response = type === "following" ? await getFollowing(currentUser?.id, currentPage) : await getFollowers(currentUser?.id, currentPage)
 
       setUsers(refresh ? response.users || [] : [...users, ...(response.users || [])])
       setTotalCount(response.total_count || 0)
@@ -46,7 +49,7 @@ const ShowFollow = ({ route, navigation }: any) => {
 
   useEffect(() => {
     loadData()
-  }, [id, type])
+  }, [currentUser?.id, type])
 
   const handleRefresh = () => {
     setRefreshing(true)
@@ -188,3 +191,4 @@ const styles = StyleSheet.create({
 })
 
 export default ShowFollow
+

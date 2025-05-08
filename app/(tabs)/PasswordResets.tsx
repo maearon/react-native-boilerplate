@@ -14,7 +14,9 @@ const PasswordResetSchema = Yup.object().shape({
 })
 
 const PasswordResets = ({ route, navigation }: any) => {
-  const { token, email } = route.params
+  // const { token, email } = 
+  const token = "LZl9lm3YaSLu2D4psfrDHw"
+  const email = "manhng132@gmail.com"
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (values: { password: string; password_confirmation: string }, { setSubmitting }: any) => {

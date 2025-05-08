@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native"
+import { router } from 'expo-router'
 import type React from "react"
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { deleteMicropost } from "../services/micropostService"
@@ -36,21 +37,22 @@ const MicropostItem: React.FC<MicropostItemProps> = ({ micropost, onDelete }) =>
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity
-        onPress={() => navigation.navigate("UserProfile" as never, { id: String(micropost.user_id) } as never)}
+      <TouchableOpacity
+        onPress={() => router.push({ pathname: '/UserProfile', params: { id: String(micropost.user_id) } })}
+
         style={styles.avatarContainer}
       >
         <Image
           style={styles.avatar}
           source={{ uri: `https://secure.gravatar.com/avatar/${micropost.gravatar_id}?s=${micropost.size}` }}
         />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       <View style={styles.contentContainer}>
-        {/* <TouchableOpacity
-          onPress={() => navigation.navigate("UserProfile" as never, { id: micropost.user_id } as never)}
+        <TouchableOpacity
+          onPress={() => router.push({ pathname: '/UserProfile', params: { id: micropost.user_id } })}
         >
           <Text style={styles.userName}>{micropost.user_name}</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <Text style={styles.content}>{micropost.content}</Text>
         {micropost.image && <Image source={{ uri: micropost.image }} style={styles.postImage} />}
         <View style={styles.footer}>

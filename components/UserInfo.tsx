@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native"
+import { router } from 'expo-router'
 import type React from "react"
-import { Image, StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import type { User } from "../types/user"
 
 interface UserInfoProps {
@@ -20,11 +21,11 @@ const UserInfo: React.FC<UserInfoProps> = ({ user, micropostCount, showProfileLi
       />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{user.name}</Text>
-        {/* {showProfileLink && (
-          <TouchableOpacity onPress={() => navigation.navigate("UserProfile" as never, { id: user.id } as never)}>
+        {showProfileLink && (
+          <TouchableOpacity onPress={() => router.push({ pathname: '/UserProfile', params: { id: user.id } })}>
             <Text style={styles.profileLink}>view my profile</Text>
           </TouchableOpacity>
-        )} */}
+        )}
         {micropostCount !== undefined && (
           <Text style={styles.micropostCount}>
             {micropostCount} micropost{micropostCount !== 1 ? "s" : ""}

@@ -1,5 +1,5 @@
 export interface User {
-  id: number
+  readonly id: string
   name: string
   email: string
   gravatar_id?: string
@@ -18,6 +18,7 @@ export interface UserShow extends User {
 }
 
 export interface UserEdit {
+  readonly id: string
   name: string
   email: string
 }

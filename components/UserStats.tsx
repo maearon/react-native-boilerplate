@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native"
+import { router } from 'expo-router'
 import type React from "react"
-import { StyleSheet, View } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 interface UserStatsProps {
   userId: string | number
@@ -13,21 +14,21 @@ const UserStats: React.FC<UserStatsProps> = ({ userId, following, followers }) =
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={styles.statContainer}
-        onPress={() => navigation.navigate("ShowFollow" as never, { id: userId, type: "following" } as never)}
+        onPress={() => router.push({ pathname: '/ShowFollow', params: { id: userId, type: "following" } })}
       >
         <Text style={styles.statNumber}>{following}</Text>
         <Text style={styles.statLabel}>following</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={styles.statContainer}
-        onPress={() => navigation.navigate("ShowFollow" as never, { id: userId, type: "followers" } as never)}
+        onPress={() => router.push({ pathname: '/ShowFollow', params: { id: userId, type: "followers" } })}
       >
         <Text style={styles.statNumber}>{followers}</Text>
         <Text style={styles.statLabel}>followers</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
     </View>
   )
 }

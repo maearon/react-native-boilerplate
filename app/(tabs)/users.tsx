@@ -48,7 +48,7 @@ const Users = ({ navigation }: any) => {
     }
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     Alert.alert("Delete User", "Are you sure you want to delete this user?", [
       { text: "Cancel", style: "cancel" },
       {

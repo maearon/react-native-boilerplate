@@ -11,7 +11,7 @@ import { useEffect, useState } from "react"
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native"
 
 const UserProfile = ({ route, navigation }: any) => {
-  const { id } = route.params
+  // const { id } = route.params
   const { user: currentUser } = useAuthStore()
   const [user, setUser] = useState<UserShow | null>(null)
   const [microposts, setMicroposts] = useState<Micropost[]>([])
@@ -22,11 +22,11 @@ const UserProfile = ({ route, navigation }: any) => {
   const [isFollowing, setIsFollowing] = useState(false)
 
   const loadUser = async (refresh = false) => {
-    if (!id) return
+    if (!currentUser?.id) return
 
     try {
       const currentPage = refresh ? 1 : page
-      const response = await getUser(id, { page: currentPage })
+      const response = await getUser(currentUser?.id, { page: currentPage })
 
       setUser(response.user)
       setMicroposts(refresh ? response.microposts || [] : [...microposts, ...(response.microposts || [])])
@@ -49,7 +49,7 @@ const UserProfile = ({ route, navigation }: any) => {
 
   useEffect(() => {
     loadUser()
-  }, [id])
+  }, [currentUser?.id])
 
   const handleRefresh = () => {
     setRefreshing(true)
@@ -109,7 +109,7 @@ const UserProfile = ({ route, navigation }: any) => {
 
             {currentUser && currentUser.id !== user.id && (
               <View style={styles.followButtonContainer}>
-                <FollowButton userId={id} isFollowing={isFollowing} onFollowChange={handleFollowChange} />
+                <FollowButton userId={currentUser?.id} isFollowing={isFollowing} onFollowChange={handleFollowChange} />
               </View>
             )}
 

@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import { SafeAreaView, StyleSheet, Text, View } from "react-native"
 
 const AccountActivations = ({ route, navigation }: any) => {
-  const { token, email } = route.params
+  // const { token, email } = route.params
+  const token = "6zj36jJnpQwI4JwJYlP5Cw"
+  const email = "manhng132@gmail.com"
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

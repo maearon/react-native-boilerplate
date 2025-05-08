@@ -1,56 +1,97 @@
+import LoadingSpinner from "@/components/LoadingSpinner"
+import { editUser, updateUser } from "@/services/userService"
+import { useAuthStore } from "@/stores/authStore"
+import type { UserUpdateParams } from "@/types/user"
+import { UserEdit } from "@/types/user"
+import { router } from 'expo-router'
 import { Formik } from "formik"
-import { useState } from "react"
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useEffect, useState } from "react"
+import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
 import * as Yup from "yup"
-import { createUser } from "../services/userService"
-import type { UserCreateParams } from "../types/user"
 
-const SignupSchema = Yup.object().shape({
+const UserEditSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   email: Yup.string().email("Invalid email address").required("Email is required"),
-  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-  password_confirmation: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords must match")
-    .required("Password confirmation is required"),
+  password: Yup.string().min(6, "Password must be at least 6 characters"),
+  password_confirmation: Yup.string().oneOf([Yup.ref("password")], "Passwords must match"),
 })
 
-const Signup = ({ navigation }: any) => {
-  const [signupErrors, setSignupErrors] = useState<{ [key: string]: string[] } | null>(null)
+const UserSettings = ({ route, navigation }: any) => {
+  // const { id } = route.params.id
+  const { user: currentUser } = useAuthStore()
+  const [loading, setLoading] = useState(true)
+  const [userData, setUserData] = useState<UserEdit>({ id: "", name: "", email: "" })
+  const [gravatar, setGravatar] = useState("")
+  const [updateErrors, setUpdateErrors] = useState<{ [key: string]: string[] } | null>(null)
   const [generalError, setGeneralError] = useState<string | null>(null)
 
-  const handleSignup = async (values: UserCreateParams, { setSubmitting }: any) => {
-    setSignupErrors(null)
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!currentUser?.id) return
+
+      try {
+        const response = await editUser(currentUser?.id)
+        setUserData(response.user)
+        setGravatar(response.gravatar)
+      } catch (error) {
+        Alert.alert("Error", "Failed to load user data")
+        navigation.goBack()
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadUserData()
+  }, [currentUser?.id, navigation])
+
+  const handleUpdate = async (values: UserUpdateParams, { setSubmitting }: any) => {
+    if (!currentUser?.id) return
+
+    setUpdateErrors(null)
     setGeneralError(null)
 
     try {
-      const response = await createUser({ user: values })
+      if (!currentUser?.id) {
+        throw new Error("User ID is undefined");
+      }
+      const response = await updateUser(currentUser.id, { user: values })
 
-      if (response.flash) {
-        Alert.alert("Success", response.flash[1], [{ text: "OK", onPress: () => navigation.navigate("Login") }])
-      } else if (response.errors) {
-        setSignupErrors(response.errors)
+      if (response.flash_success) {
+        Alert.alert("Success", response.flash_success[1], [
+          { text: "OK", onPress: () => router.push({ pathname: '/UserProfile', params: { userId: currentUser?.id?.toString(), name: userData.name } }) },
+        ])
       } else if (response.error) {
         setGeneralError(Array.isArray(response.error) ? response.error[0] : response.error)
       }
     } catch (error: any) {
       if (error.errors) {
-        setSignupErrors(error.errors)
+        setUpdateErrors(error.errors)
       } else if (error.error) {
         setGeneralError(Array.isArray(error.error) ? error.error[0] : error.error)
       } else {
-        setGeneralError("An error occurred during signup. Please try again.")
+        setGeneralError("An error occurred while updating your profile. Please try again.")
       }
     } finally {
       setSubmitting(false)
     }
   }
 
+  if (loading) {
+    return <LoadingSpinner fullPage />
+  }
+
+  // Check if the current user is authorized to edit this profile
+  if (currentUser?.id.toString() !== currentUser?.id && !currentUser?.admin) {
+    navigation.goBack()
+    return null
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.card}>
-          <Text style={styles.title}>Sign up</Text>
+          <Text style={styles.title}>Update your profile</Text>
 
           {generalError && (
             <View style={styles.errorContainer}>
@@ -58,9 +99,9 @@ const Signup = ({ navigation }: any) => {
             </View>
           )}
 
-          {signupErrors && Object.keys(signupErrors).length > 0 && (
+          {updateErrors && Object.keys(updateErrors).length > 0 && (
             <View style={styles.errorContainer}>
-              {Object.entries(signupErrors).map(([field, errors]) =>
+              {Object.entries(updateErrors).map(([field, errors]) =>
                 errors.map((error, index) => (
                   <Text key={`${field}-${index}`} style={styles.errorText}>
                     {field.charAt(0).toUpperCase() + field.slice(1)} {error}
@@ -70,10 +111,19 @@ const Signup = ({ navigation }: any) => {
             </View>
           )}
 
+          <View style={styles.avatarContainer}>
+            <Image style={styles.avatar} source={{ uri: `https://secure.gravatar.com/avatar/${gravatar}?s=80` }} />
+          </View>
+
           <Formik
-            initialValues={{ name: "", email: "", password: "", password_confirmation: "" }}
-            validationSchema={SignupSchema}
-            onSubmit={handleSignup}
+            initialValues={{
+              name: userData.name,
+              email: userData.email,
+              password: "",
+              password_confirmation: "",
+            }}
+            validationSchema={UserEditSchema}
+            onSubmit={handleUpdate}
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <View>
@@ -114,6 +164,7 @@ const Signup = ({ navigation }: any) => {
                     secureTextEntry
                   />
                   {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                  <Text style={styles.helperText}>Leave blank if you don't want to change it</Text>
                 </View>
 
                 <View style={styles.formGroup}>
@@ -139,7 +190,7 @@ const Signup = ({ navigation }: any) => {
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.buttonText}>{isSubmitting ? "Creating account..." : "Create my account"}</Text>
+                  <Text style={styles.buttonText}>{isSubmitting ? "Saving changes..." : "Save changes"}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -175,6 +226,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  avatarContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
   formGroup: {
     marginBottom: 15,
   },
@@ -204,6 +264,11 @@ const styles = StyleSheet.create({
     color: "#dc3545",
     fontSize: 14,
   },
+  helperText: {
+    color: "#6c757d",
+    fontSize: 12,
+    marginTop: 5,
+  },
   button: {
     backgroundColor: "#0a7ea4",
     padding: 12,
@@ -220,4 +285,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Signup
+export default UserSettings

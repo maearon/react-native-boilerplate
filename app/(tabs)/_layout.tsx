@@ -89,7 +89,7 @@ export default function TabLayout() {
           'PasswordResetsNew',
           'ShowFollow',
           'Signup',
-          // 'UserEdit',
+          // 'UserSettings',
           // 'UserProfile',
           // 'users',
           'explore',

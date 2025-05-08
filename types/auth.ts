@@ -22,7 +22,7 @@ export interface LoginResponse {
 }
 
 export interface User {
-  id: number
+  readonly id: string
   email: string
   name: string
   gravatar_hash?: string
