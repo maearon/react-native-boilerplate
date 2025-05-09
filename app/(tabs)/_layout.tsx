@@ -40,20 +40,21 @@ export default function TabLayout() {
           }}
         />
 
-        {loggedIn && (
-          <Tabs.Screen
-            name="users"
-            options={{
-              title: 'Users',
-              tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.2.fill" color={color} />,
-            }}
-          />
-        )}
+        <Tabs.Screen
+          name="users"
+          options={{
+            href: loggedIn ? undefined : null,
+            title: 'Users',
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="person.2.fill" color={color} />
+            ),
+          }}
+        />
 
-        {/* Fake menu tab to open modal */}
         <Tabs.Screen
           name="menu"
           options={{
+            href: loggedIn || !loggedIn ? undefined : null, // fallback safe
             title: loggedIn ? 'Menu' : 'Login',
             tabBarIcon: ({ color }) => (
               <IconSymbol
@@ -64,36 +65,28 @@ export default function TabLayout() {
             ),
             tabBarButton: (props) =>
               loggedIn ? (
-                <HapticTab
-                  {...props}
-                  onPress={() => setMenuVisible(true)}
-                />
+                <HapticTab {...props} onPress={() => setMenuVisible(true)} />
               ) : (
-                <HapticTab
-                  {...props}
-                  onPress={() => router.push('/Login')}
-                />
+                <HapticTab {...props} onPress={() => router.push('/Login')} />
               ),
           }}
         />
 
-        {/* Hide these routes from tab bar */}
+        {/* Luôn ẩn các route phụ này */}
         {[
           'About',
           'AccountActivations',
           'AccountActivationsNew',
           'Contact',
-          // 'Login',
           'NotFound',
           'PasswordResets',
           'PasswordResetsNew',
           'ShowFollow',
           'Signup',
-          // 'UserSettings',
-          // 'UserProfile',
-          // 'users',
           'explore',
-          // 'menu',
+          'UserSettings',
+          'UserProfile',
+          'Login',
         ].map((name) => (
           <Tabs.Screen key={name} name={name} options={{ href: null }} />
         ))}
