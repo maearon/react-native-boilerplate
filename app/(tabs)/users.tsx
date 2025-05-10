@@ -37,6 +37,13 @@ const Users = ({ navigation }: any) => {
     loadUsers()
   }, [])
 
+  // to load more users each time page +1 and page > 1 after first call
+  useEffect(() => {
+    if (page > 1) {
+      loadUsers()
+    }
+  }, [page])
+
   const handleRefresh = () => {
     setRefreshing(true)
     loadUsers(true)
@@ -45,7 +52,6 @@ const Users = ({ navigation }: any) => {
   const handleLoadMore = () => {
     if (users.length < totalCount) {
       setPage(page + 1)
-      loadUsers()
     }
   }
 
@@ -112,7 +118,7 @@ const Users = ({ navigation }: any) => {
         onRefresh={handleRefresh}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={users.length > 0 && page * 10 < totalCount ? <LoadingSpinner /> : null}
+        ListFooterComponent={users.length > 0 && page * 5 < totalCount ? <LoadingSpinner /> : null}
       />
     </SafeAreaView>
   )

@@ -51,6 +51,13 @@ const UserProfile = ({ route, navigation }: any) => {
     loadUser()
   }, [currentUser?.id])
 
+  // to load more posts each time page +1 and page > 1 after first call
+  useEffect(() => {
+    if (page > 1) {
+      loadUser()
+    }
+  }, [page])
+
   const handleRefresh = () => {
     setRefreshing(true)
     loadUser(true)
@@ -59,7 +66,6 @@ const UserProfile = ({ route, navigation }: any) => {
   const handleLoadMore = () => {
     if (microposts.length < totalCount) {
       setPage(page + 1)
-      loadUser()
     }
   }
 
@@ -126,7 +132,7 @@ const UserProfile = ({ route, navigation }: any) => {
         onRefresh={handleRefresh}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={microposts.length > 0 && page * 10 < totalCount ? <LoadingSpinner /> : null}
+        ListFooterComponent={microposts.length > 0 && page * 5 < totalCount ? <LoadingSpinner /> : null}
       />
     </SafeAreaView>
   )

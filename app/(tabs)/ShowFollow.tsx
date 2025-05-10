@@ -52,6 +52,13 @@ const ShowFollow = ({ route, navigation }: any) => {
     loadData()
   }, [currentUser?.id, type])
 
+  // to load more users each time page +1 and page > 1 after first call
+  useEffect(() => {
+    if (page > 1) {
+      loadData()
+    }
+  }, [page])
+
   const handleRefresh = () => {
     setRefreshing(true)
     loadData(true)
@@ -60,7 +67,6 @@ const ShowFollow = ({ route, navigation }: any) => {
   const handleLoadMore = () => {
     if (users.length < totalCount) {
       setPage(page + 1)
-      loadData()
     }
   }
 
@@ -119,7 +125,7 @@ const ShowFollow = ({ route, navigation }: any) => {
         onRefresh={handleRefresh}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={users.length > 0 && page * 10 < totalCount ? <LoadingSpinner /> : null}
+        ListFooterComponent={users.length > 0 && page * 5 < totalCount ? <LoadingSpinner /> : null}
       />
     </SafeAreaView>
   )
